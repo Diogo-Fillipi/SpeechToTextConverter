@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Arquivo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="form-container">
+    <form id="upload-form" enctype="multipart/form-data">
+        <!-- Input para seleção de arquivo -->
+        <label for="file" class="form-label">Escolha um arquivo</label>
+        <input type="file" id="file" name="file" class="form-input-hidden" required onchange="updateFileName()">
+        <label for="file" id="file-label" class="custom-upload">Selecionar arquivo</label>
+
+        <!-- Botão de envio -->
+        <button type="submit" class="form-button">Enviar</button>
+    </form>
+</div>
+
+<script>
+    // Atualiza o nome do arquivo no label
+    function updateFileName() {
+        const fileInput = document.getElementById('file');
+        const fileLabel = document.getElementById('file-label');
+        const fileName = fileInput.files[0] ? fileInput.files[0].name : "Selecionar arquivo";
+        fileLabel.textContent = fileName;
+    }
+
+    // Gerencia o envio do formulário e o download do arquivo de transcrição
+    document.getElementById('upload-form').addEventListener('submit', async function (e) {
+        e.preventDefault(); // Impede o comportamento padrão do formulário
+
+        const formData = new FormData(this); // Inclui apenas o arquivo no FormData
+        try {
+            const response = await fetch('/api/transcribe', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao processar o arquivo');
+            }
+
+            const transcription = await response.text(); // Obtém a transcrição como texto
+
+            // Cria um blob para download
+            const blob = new Blob([transcription], { type: 'text/plain' });
+            const downloadUrl = URL.createObjectURL(blob);
+
+            // Cria um link temporário para download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'transcription.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Remove o link após o clique
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao processar o arquivo.');
+        }
+    });
+</script>
+</body>
+</html>

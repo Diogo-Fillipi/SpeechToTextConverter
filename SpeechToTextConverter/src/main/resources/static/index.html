@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Arquivo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="form-container">
+    <form id="upload-form" enctype="multipart/form-data">
+
+        <label for="file" class="form-label">Select a file</label>
+        <input type="file" id="file" name="file" class="form-input-hidden" required onchange="updateFileName()">
+        <label for="file" id="file-label" class="custom-upload">Select file</label>
+
+        <button type="submit" class="form-button">Submit</button>
+    </form>
+</div>
+
+<script>
+
+    function updateFileName() {
+        const fileInput = document.getElementById('file');
+        const fileLabel = document.getElementById('file-label');
+        const fileName = fileInput.files[0] ? fileInput.files[0].name : "select file";
+        fileLabel.textContent = fileName;
+    }
+
+
+    document.getElementById('upload-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        try {
+            const response = await fetch('/api/transcribe', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Error processing your file');
+            }
+
+            const transcription = await response.text();
+
+            // Create a blob for downloading
+            const blob = new Blob([transcription], { type: 'text/plain' });
+            const downloadUrl = URL.createObjectURL(blob);
+
+            // Create a temporary link for downloading
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'transcription.txt';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error has occurred processing your file');
+        }
+    });
+</script>
+</body>
+</html>
