@@ -82,6 +82,6 @@ public class SpeechController {
 ## API instructions 
 - 1 - Create an account on OpenAi, you can do it on: https://platform.openai.com/
 - 2 - Create a SpeechToText project and generate your API Key, you can do it on: https://platform.openai.com/settings/organization/api-keys
-- 3 - Put the API Key on the:  ```spring.ai.openai.api-key=[YourApiKey] ``` <br> <br>
+- 3 - Put the API Key on:  ```spring.ai.openai.api-key=[YourApiKey] ``` <br> <br>
 ### Now you should be able to use the API!
 
