@@ -26,7 +26,7 @@ public class HttpUtils {
                 .build();
     }
 
-}]
+}
 ```
 The Client class where we configure our request to the API
 ``` Java
