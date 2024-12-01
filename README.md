@@ -72,7 +72,7 @@ public class SpeechController {
         return client.transcribe(file);
     }
 
-    @GetMapping("/teste")
+    @GetMapping("/test")
     public ResponseEntity<String> teste(){
         String response = "It's working";
         return ResponseEntity.ok(response);
